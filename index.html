@@ -1,347 +1,222 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAXX - ALL PAYMENT</title>
+    <title>YTTA - All Payment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Reset and Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+        body{background:#000;color:#fff;overflow-x:hidden;min-height:100vh;position:relative;}
+        
+        #particles-js{
+            position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;
+            background:radial-gradient(circle at center,#1a0033 0%,#000 70%);
+        }
+        
+        .container{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:1.5rem;}
+        header{text-align:center;margin:2rem 0 3rem;}
+        h1{font-size:2.8rem;font-weight:600;background:linear-gradient(90deg,#d400ff,#00ffea);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 20px rgba(212,0,255,0.5);}
+        .subtitle{font-size:0.95rem;color:#c784ff;margin-top:8px;letter-spacing:1px;}
+        
+        .payment-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;}
+        .payment-card{
+            background:rgba(25,0,55,0.55);border:1px solid #b53aff;border-radius:16px;padding:1.4rem;
+            backdrop-filter:blur(12px);box-shadow:0 0 25px rgba(181,58,255,0.25);transition:all .4s;position:relative;overflow:hidden;
+        }
+        .payment-card::before{
+            content:'';position:absolute;inset:-2px;background:linear-gradient(45deg,#d400ff,#00ffea);border-radius:16px;z-index:-1;opacity:0;transition:opacity .4s;
+        }
+        .payment-card:hover::before{opacity:1;}
+        .payment-card:hover{transform:translateY(-10px);box-shadow:0 0 40px rgba(181,58,255,0.5);}
+        
+        .payment-header{display:flex;align-items:center;margin-bottom:12px;}
+        .payment-icon{width:48px;height:48px;margin-right:12px;filter:drop-shadow(0 0 8px #d400ff);}
+        .payment-title{font-size:1.25rem;color:#00ffea;text-shadow:0 0 10px #00ffea;font-weight:500;}
+        
+        .account-info{
+            background:rgba(0,0,0,0.4);padding:12px 10px;border-radius:10px;border:1px dashed #b53aff;
+            text-align:center;font-size:0.95rem;color:#e6b3ff;margin:12px 0;line-height:1.4;
+        }
+        .status-off{color:#ff3366;font-weight:600;font-size:0.95rem;}
+        
+        .button-group{display:flex;gap:10px;margin-top:12px;}
+        .payment-button,.telegram-button{
+            flex:1;padding:11px 8px;border:none;border-radius:50px;font-size:0.88rem;
+            font-weight:500;cursor:pointer;transition:all .3s;box-shadow:0 0 15px rgba(181,58,255,0.4);
+        }
+        .payment-button{background:linear-gradient(45deg,#d400ff,#00ffea);color:#fff;}
+        .telegram-button{background:linear-gradient(45deg,#0088cc,#00aaff);color:#fff;}
+        .payment-button:hover,.telegram-button:hover{
+            transform:translateY(-4px);box-shadow:0 0 25px rgba(181,58,255,0.7);
+        }
+        
+        .copy-notification{
+            position:fixed;top:20px;right:20px;background:linear-gradient(45deg,#00ff88,#00c853);
+            color:#000;padding:12px 24px;border-radius:50px;z-index:9999;display:none;
+            font-weight:600;font-size:0.9rem;box-shadow:0 0 20px rgba(0,255,0,0.5);
+        }
+        
+        /* Tombol Musik */
+        #musicControl{
+            position:fixed;bottom:20px;right:20px;z-index:999;
+            width:60px;height:60px;border-radius:50%;
+            background:linear-gradient(45deg,#d400ff,#00ffea);
+            border:none;box-shadow:0 0 30px rgba(212,0,255,0.7);
+            cursor:pointer;display:flex;align-items:center;justify-content:center;
+            font-size:28px;color:#fff;transition:all .3s;
+        }
+        #musicControl:hover{transform:scale(1.1);box-shadow:0 0 40px rgba(212,0,255,1);}
+        #musicControl.paused{animation:pulse 2s infinite;}
+        @keyframes pulse{0%,100%{box-shadow:0 0 30px rgba(212,0,255,0.7);}50%{box-shadow:0 0 50px rgba(212,0,255,1);}}
+        
+        footer{text-align:center;margin:4rem 0 5rem;color:#555;font-size:0.8rem;}
+        @media(max-width:768px){
+            h1{font-size:2.3rem;}
+            .button-group{flex-direction:column;}
+            #musicControl{width:55px;height:55px;font-size:24px;bottom:15px;right:15px;}
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particles-js"></div>
+
+    <!-- Musik + Kontrol -->
+    <audio id="bgm" loop preload="auto">
+        <source src="https://lannytourl.vestia.icu/api/file/692d764e52c530a86739ffb1.mp3" type="audio/mp3">
+    </audio>
+    <button id="musicControl" title="Klik untuk Play/Stop musik">▶</button>
+
+    <div class="container">
+        <header>
+            <h1>YTTA</h1>
+            <p class="subtitle">Universal Payment Gateway</p>
+        </header>
+
+        <div class="payment-options">
+
+            <!-- DANA (AKTIF) -->
+            <div class="payment-card">
+                <div class="payment-header">
+                    <img src="https://img100.pixhost.to/images/667/540082364_skyzopedia.jpg" alt="DANA" class="payment-icon">
+                    <div class="payment-title">DANA</div>
+                </div>
+                <div class="account-info" data-number="083861251898">
+                    0838-6125-1898<br>
+                    <small>a.n. MISRAN</small>
+                </div>
+                <div class="button-group">
+                    <button class="payment-button" onclick="copyNumber('083861251898')">Copy Nomor</button>
+                    <a href="https://t.me/NaxxZero" class="telegram-button" target="_blank">Konfirmasi Telegram</a>
+                </div>
+            </div>
+
+            <!-- BRI OFFLINE -->
+            <div class="payment-card">
+                <div class="payment-header">
+                    <img src="https://files.catbox.moe/9y8p0v.png" alt="BRI" class="payment-icon">
+                    <div class="payment-title">BRI</div>
+                </div>
+                <div class="account-info">
+                    <span class="status-off">OFFLINE — Belum Tersedia</span>
+                </div>
+            </div>
+
+            <!-- GoPay LIMIT -->
+            <div class="payment-card">
+                <div class="payment-header">
+                    <img src="https://img100.pixhost.to/images/667/540083275_skyzopedia.jpg" alt="GoPay" class="payment-icon">
+                    <div class="payment-title">GoPay</div>
+                </div>
+                <div class="account-info">
+                    <span class="status-off">LIMIT — Sementara Tidak Tersedia</span>
+                </div>
+            </div>
+
+            <!-- OVO LIMIT -->
+            <div class="payment-card">
+                <div class="payment-header">
+                    <img src="https://img100.pixhost.to/images/667/540082774_skyzopedia.jpg" alt="OVO" class="payment-icon">
+                    <div class="payment-title">OVO</div>
+                </div>
+                <div class="account-info">
+                    <span class="status-off">LIMIT — Sementara Tidak Tersedia</span>
+                </div>
+            </div>
+
+            <!-- SeaBank OFFLINE -->
+            <div class="payment-card">
+                <div class="payment-header">
+                    <img src="https://files.catbox.moe/tm16jp.jpg" alt="SeaBank" class="payment-icon">
+                    <div class="payment-title">SeaBank</div>
+                </div>
+                <div class="account-info">
+                    <span class="status-off">OFFLINE — Belum Tersedia</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="copy-notification" id="copyNotif">Nomor berhasil dicopy!</div>
+    <footer>© 2025 YTTA — Black Purple Neon Edition</footer>
+
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Particles
+        particlesJS("particles-js", {
+            "particles":{"number":{"value":90,"density":{"enable":true,"value_area":800}},
+            "color":{"value":["#d400ff","#00ffea"]},
+            "shape":{"type":"circle"},
+            "opacity":{"value":0.6,"random":true},
+            "size":{"value":3,"random":true},
+            "line_linked":{"enable":true,"distance":140,"color":"#d400ff","opacity":0.4,"width":1},
+            "move":{"enable":true,"speed":2}},
+            "interactivity":{
+                "detect_on":"canvas",
+                "events":{"onhover":{"enable":true,"mode":"grab"},"onclick":{"enable":true,"mode":"push"}},
+                "modes":{"grab":{"distance":140,"line_linked":{"opacity":1}},"push":{"particles_nb":4}}
+            },"retina_detect":true
+        });
+
+        // Copy nomor
+        function copyNumber(num){
+            navigator.clipboard.writeText(num).then(()=>{
+                const n=document.getElementById('copyNotif');
+                n.style.display='block';
+                setTimeout(()=>n.style.display='none',1800);
+            });
         }
 
-        body {
-            overflow-x: hidden;
-            color: #fff;
-            position: relative;
-            min-height: 100vh;
-            background: #0a0a0a;
-        }
+        // Kontrol Musik
+        const audio = document.getElementById('bgm');
+        const btn = document.getElementById('musicControl');
+        audio.volume = 0.4;
 
-        /* Purple Neon Background */
-        .neon-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
-        }
+        // Auto play (beberapa browser blokir, jadi klik pertama wajib)
+        document.addEventListener('click', function initAudio(){
+            audio.play();
+            btn.textContent = '❚❚';
+            btn.classList.remove('paused');
+            document.removeEventListener('click', initAudio);
+        }, {once:true});
 
-        .floating-particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #8b5cf6;
-            border-radius: 50%;
-            animation: floatFast 3s infinite ease-in-out;
-            box-shadow: 0 0 10px #8b5cf6, 0 0 20px #8b5cf6;
-        }
-
-        @keyframes floatFast {
-            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
-            25% { transform: translate(10px, -15px) scale(1.2); opacity: 1; }
-            50% { transform: translate(-5px, -25px) scale(0.8); opacity: 0.5; }
-            75% { transform: translate(-15px, -10px) scale(1.1); opacity: 0.9; }
-        }
-
-        /* Sound Toggle */
-        .sound-toggle {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 1000;
-            background: rgba(139, 92, 246, 0.2);
-            border: 1px solid #8b5cf6;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
-        }
-
-        .sound-toggle:hover {
-            background: rgba(139, 92, 246, 0.3);
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
-        }
-
-        .sound-toggle i {
-            font-size: 1.2rem;
-            color: #c4b5fd;
-        }
-
-        .sound-toggle.muted i {
-            color: #6b7280;
-        }
-
-        /* Main Content */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: rgba(139, 92, 246, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.3rem;
-            background: linear-gradient(to right, #c4b5fd, #8b5cf6, #7c3aed);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
-            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #c4b5fd;
-        }
-
-        /* Payment Options */
-        .payment-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .payment-card {
-            background: rgba(139, 92, 246, 0.1);
-            border-radius: 12px;
-            padding: 1.2rem;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
-        }
-
-        .payment-card:hover {
-            transform: translateY(-5px);
-            background: rgba(139, 92, 246, 0.15);
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
-            border: 1px solid rgba(139, 92, 246, 0.5);
-        }
-
-        .payment-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.8rem;
-        }
-
-        .payment-icon {
-            width: 40px;
-            height: 40px;
-            margin-right: 0.8rem;
-            object-fit: contain;
-            border-radius: 8px;
-            filter: brightness(0) invert(1);
-        }
-
-        .payment-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: linear-gradient(to right, #c4b5fd, #8b5cf6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .payment-description {
-            margin-bottom: 1rem;
-            opacity: 0.8;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            color: #c4b5fd;
-        }
-
-        .account-info {
-            background: rgba(139, 92, 246, 0.15);
-            padding: 0.8rem;
-            border-radius: 8px;
-            margin-bottom: 0.8rem;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(139, 92, 246, 0.2);
-        }
-
-        .account-info:hover {
-            background: rgba(139, 92, 246, 0.25);
-            border: 1px solid rgba(139, 92, 246, 0.4);
-        }
-
-        .account-number {
-            font-size: 1rem;
-            font-weight: 500;
-            word-break: break-all;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            color: #e9d5ff;
-        }
-
-        .account-name {
-            font-size: 0.85rem;
-            opacity: 0.8;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #c4b5fd;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .payment-button {
-            display: inline-block;
-            padding: 0.6rem 1.2rem;
-            background: linear-gradient(45deg, #7c3aed, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            text-align: center;
-            flex: 1;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
-        }
-
-        .payment-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(139, 92, 246, 0.6);
-            background: linear-gradient(45deg, #8b5cf6, #7c3aed);
-        }
-
-        .payment-button:active {
-            transform: translateY(0);
-        }
-
-        .telegram-button {
-            background: linear-gradient(45deg, #8b5cf6, #6366f1);
-        }
-
-        .telegram-button:hover {
-            box-shadow: 0 0 25px rgba(139, 92, 246, 0.6);
-            background: linear-gradient(45deg, #6366f1, #8b5cf6);
-        }
-
-        .copy-notification {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            background: rgba(139, 92, 246, 0.9);
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 5px;
-            z-index: 1000;
-            display: none;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
-            animation: fadeInOut 2s ease-in-out;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border: 1px solid rgba(139, 92, 246, 0.5);
-        }
-
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; transform: translateY(-15px); }
-            10%, 90% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Warning Card */
-        .warning-card {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin-top: 1.5rem;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
-        }
-
-        .warning-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #fca5a5;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .warning-text {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            line-height: 1.4;
-            color: #fca5a5;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding: 1.5rem 0;
-            font-size: 0.8rem;
-            opacity: 0.7;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #c4b5fd;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.5rem;
+        btn.addEventListener('click', ()=>{
+            if(audio.paused){
+                audio.play();
+                btn.textContent = '❚❚';
+                btn.classList.remove('paused');
+            }else{
+                audio.pause();
+                btn.textContent = '▶';
+                btn.classList.add('paused');
             }
-            
-            .payment-options {
-                grid-template-columns: 1fr;
-            }
-            
-            .payment-card {
-                padding: 1rem;
+        });
+    </script>
+</body>
+</html>g: 1rem;
             }
             
             .button-group {
