@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIIX Agency - All Payment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* RADISSON - NIIX AGENCY THEME (Black & Gold/Yellow Accent) */
+        :root {
+            --niix-bg-dark: #121212; /* Dark Background */
+            --niix-fg-light: #f4f4f4; /* Light Foreground/Text */
+            --niix-accent-gold: #ffc72c; /* Gold/Yellow Accent (Dominant) */
+            --niix-accent-secondary: #007bff; /* Blue for Telegram/Secondary */
+            --niix-card-bg: #1e1e1e; /* Card Background */
+            --niix-border: #333333; /* Subtle Border */
+            --niix-success: #28a745; /* Green for Success */
+            --niix-danger: #dc3545; /* Red for Error/Offline */
+        }
+
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Roboto',sans-serif;}
+        body{
+            background: var(--niix-bg-dark);
+            color: var(--niix-fg-light);
+            min-height:100vh;position:relative;
+            font-size: 14px; 
+        }
+        
+        /* Neon/Particle Background - Dihilangkan/Diganti dengan Background Minimalis */
+        #neonBackground {
+            display: none; /* Menyembunyikan elemen background neon sebelumnya */
+        }
+
+        /* Container & Header */
+        .container{position:relative;z-index:10;max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+        header{text-align:center;margin:1rem 0 3rem;}
+        h1{
+            font-size:2.8rem; /* Ukuran H1 lebih besar untuk kesan premium */
+            font-weight:900; /* Extra Bold */
+            color: var(--niix-accent-gold);
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(255, 199, 44, 0.5); /* Subtle Gold Shadow */
+            text-transform: uppercase;
+        }
+        .subtitle{
+            font-size:0.95rem; 
+            color:var(--niix-fg-light);
+            margin-top:5px;
+            letter-spacing:1.5px;
+            font-weight: 400;
+        }
+        
+        /* Payment Cards */
+        .payment-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;}
+        .payment-card{
+            background:var(--niix-card-bg);
+            border:1px solid var(--niix-border);
+            border-radius:10px;
+            padding:1.5rem;
+            box-shadow:0 8px 15px rgba(0,0,0,0.4); /* Shadow yang lebih dalam */
+            transition:all .3s;
+            opacity: 0;
+            transform: translateY(15px);
+            cursor: default;
+        }
+        
+        .payment-card:hover{
+            transform:translateY(-5px); 
+            box-shadow:0 12px 25px rgba(255, 199, 44, 0.2); /* Subtle Gold Hover Effect */
+            border-color: var(--niix-accent-gold);
+        }
+        
+        .payment-header{display:flex;align-items:center;margin-bottom:15px;}
+        .payment-icon{width:45px; 
+            height:45px;margin-right:15px;
+            border-radius: 5px;
+            object-fit: contain;
+        }
+        .payment-title{font-size:1.2rem; 
+            color:var(--niix-accent-gold);
+            font-weight:700;
+            text-transform: uppercase;
+        }
+        .payment-description{font-size:0.8rem; 
+            color:var(--niix-border);
+        }
+        
+        /* Account Info (Clickable) */
+        .account-info{
+            background:rgba(255, 199, 44, 0.05); /* Very light gold tint */
+            padding:12px 10px; 
+            border-radius:8px;
+            border:1px solid var(--niix-border);
+            text-align:center;
+            margin:15px 0;line-height:1.4;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .account-info:hover{
+            background:rgba(255, 199, 44, 0.1);
+            border-color: var(--niix-accent-gold);
+        }
+        .account-number{font-weight: 700; color: var(--niix-fg-light); font-size: 1.15rem; letter-spacing: 1px;}
+        .account-name{font-size: 0.8rem; color: var(--niix-border); margin-top: 5px;}
+
+        /* Status & Warning */
+        .status-off{
+            color:var(--niix-danger);
+            font-weight:700;
+            font-size:0.9rem; 
+            text-transform: uppercase;
+        }
+        
+        /* Buttons */
+        .button-group{display:flex;gap:10px;margin-top:15px;}
+        .payment-button{
+            flex:1;padding:10px 8px; 
+            border:none;border-radius:5px;
+            font-size:0.85rem; 
+            font-weight:700;
+            cursor:pointer;transition:all .3s;
+            text-transform: uppercase;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        /* Primary Button (Pay) - Gold Accent */
+        .payment-button{
+            background: var(--niix-accent-gold);
+            color: var(--niix-bg-dark); /* Teks gelap di atas latar terang */
+        }
+        .payment-button:hover{
+            transform:translateY(-2px);
+            opacity: 0.9;
+            box-shadow:0 6px 10px rgba(255, 199, 44, 0.5);
+        }
+        
+        /* Telegram Button (Secondary - Blue) */
+        .telegram-button{
+            background:var(--niix-accent-secondary); 
+            color:var(--niix-fg-light);
+        }
+        .telegram-button:hover{
+            transform:translateY(-2px);
+            opacity: 0.9;
+            box-shadow:0 6px 10px rgba(0, 123, 255, 0.5);
+        }
+        
+        /* Copy Notification */
+        .copy-notification{
+            position:fixed;top:20px;right:20px; 
+            background:var(--niix-success);
+            color:var(--niix-bg-dark);
+            padding:10px 20px;border-radius:5px;
+            z-index:9999;display:none;
+            font-weight:700;font-size:0.85rem; 
+            box-shadow:0 4px 8px rgba(40, 167, 69, 0.5);
+            text-transform: uppercase;
+        }
+        
+        /* Warning Card */
+        .warning-card{
+            background:rgba(220, 53, 69, 0.1); /* Light red tint */
+            border:1px solid var(--niix-danger);
+            padding:1.5rem;border-radius:10px;
+            text-align:center;margin-top:2rem;
+            box-shadow:0 4px 15px rgba(0,0,0,0.5);
+        }
+        .warning-title{
+            font-size:1.2rem;
+            margin-bottom:10px;
+            color:var(--niix-danger);
+            font-weight: 700;
+        }
+        .warning-text{color:var(--niix-fg-light);font-size:0.9rem;} 
+
+        /* Footer */
+        footer{text-align:center;margin:3rem 0 2rem;color:var(--niix-border);font-size:0.75rem;}
+
+        /* Sound Toggle Button */
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            width: 40px; 
+            height: 40px;
+            border-radius: 50%;
+            background: var(--niix-card-bg);
+            border: 1px solid var(--niix-accent-gold);
+            color: var(--niix-accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+            font-size: 18px; 
+        }
+        .sound-toggle:hover {
+            background: rgba(255, 199, 44, 0.1);
+        }
+        .sound-toggle.muted {
+            color: var(--niix-danger);
+            border-color: var(--niix-danger);
+        }
+
+        /* Responsive */
+        @media(max-width:768px){
+            h1{font-size:2.2rem;}
+            .subtitle{font-size:0.85rem;}
+            .payment-options{gap:1rem;}
+            .button-group{flex-direction:column; gap: 8px;}
+            .payment-button{padding:9px 6px; font-size:0.8rem;}
+            .container{padding:1rem;}
+            .sound-toggle{top:15px;right:15px;width:35px;height:35px; font-size: 16px;}
+            .payment-card{padding:1.2rem;}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="neon-background" id="neonBackground">
+        </div>
+
+    <div class="sound-toggle" id="soundToggle" title="Toggle Sound FX">
+        <i class="fas fa-volume-up"></i>
+    </div>
+
+    <div class="copy-notification" id="copyNotification">
+        NOMOR BERHASIL DI COPY
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>NIIX AGENCY</h1>
+            <p class="subtitle">RADISSON PAYMENT GATEWAY</p>
+        </header>
+
+        <div class="payment-options">
+            <div class="payment-card">
+                <div class="payment-header">
+                    <img src="https://img100.pixhost.to/images/667/540082364_skyzopedia.jpg" alt="DANA" class="payment-icon">
+                    <div>
+                        <h3 class="payment-title">DANA</h3>
+                        <p class="payment-description">DOMPET DIGITAL INDONESIA</p>
+                    </div>
+                </div>
+                <div class="account-info" data-number="083861251898" title="Klik untuk Salin Nomor">
+                    <div class="account-number">0838-6125-1898</div>
+                    <div class="account-name">ATAS NAMA: MISRAN</div>
+                </div>
+                <div class="button-group">
+                    <button class="payment-button" id="pay-with-dana">BAYAR DENGAN DANA</button>
+                    <a href="https://t.me/NAXLRUNTOOLS" class="payment-button telegram-button" target="_blank">KONFIR KE TELEGRAM</a>
+                </div>
+            </div>
+
+            <div class="payment-card">
+                <div class="payment-header">
+                    <img src="https://files.catbox.moe/9y8p0v.png" alt="BRI" class="payment-icon">
+                    <div>
+                        <h3 class="payment-title">BRI</h3>
+                        <p class="payment-description">BANK RAKYAT INDONESIA</p>
+                    </div>
+                </div>
+                <div class="account-info" data-number="OFFLINE" title="Tidak Tersedia">
+                    <div class="account-number"><span class="status-off">OFFLINE</span></div>
+                    <div class="account-name">BELUM TERSEDIA</div>
+                </div>
+                <div class="button-group">
+                    <button class="payment-button" disabled style="opacity:0.6; cursor:not-allowed;">BAYAR DENGAN BRI</button>
+                    <a href="https://t.me/NAXLRUNTOOLS" class="payment-button telegram-button" target="_blank">KONFIR KE TELEGRAM</a>
+                </div>
+            </div>
+
+            <div class="payment-card">
+                <div class="payment-header">
+                    <img src="https://img100.pixhost.to/images/667/540083275_skyzopedia.jpg" alt="GoPay" class="payment-icon">
+                    <div>
+                        <h3 class="payment-title">GOPAY</h3>
+                        <p class="payment-description">DOMPET DIGITAL</p>
+                    </div>
+                </div>
+                <div class="account-info" data-number="LIMIT" title="Limit/Tidak Tersedia">
+                    <div class="account-number"><span class="status-off">LIMIT</span></div>
+                    <div class="account-name">SEMENTARA TIDAK TERSEDIA</div>
+                </div>
+                <div class="button-group">
+                    <button class="payment-button" disabled style="opacity:0.6; cursor:not-allowed;">BAYAR DENGAN GOPAY</button>
+                    <a href="https://t.me/NAXLRUNTOOLS" class="payment-button telegram-button" target="_blank">KONFIR KE TELEGRAM</a>
+                </div>
+            </div>
+
+            <div class="payment-card">
+                <div class="payment-header">
+                    <img src="https://img100.pixhost.to/images/667/540082774_skyzopedia.jpg" alt="OVO" class="payment-icon">
+                    <div>
+                        <h3 class="payment-title">OVO</h3>
+                        <p class="payment-description">DOMPET DIGITAL</p>
+                    </div>
+                </div>
+                <div class="account-info" data-number="LIMIT" title="Limit/Tidak Tersedia">
+                    <div class="account-number"><span class="status-off">LIMIT</span></div>
+                    <div class="account-name">SEMENTARA TIDAK TERSEDIA</div>
+                </div>
+                <div class="button-group">
+                    <button class="payment-button" disabled style="opacity:0.6; cursor:not-allowed;">BAYAR DENGAN OVO</button>
+                    <a href="https://t.me/NAXLRUNTOOLS" class="payment-button telegram-button" target="_blank">KONFIR KE TELEGRAM</a>
+                </div>
+            </div>
+            
+            <div class="payment-card">
+                <div class="payment-header">
+                    <img src="https://files.catbox.moe/tm16jp.jpg" alt="SeaBank" class="payment-icon">
+                    <div>
+                        <h3 class="payment-title">SeaBank</h3>
+                        <p class="payment-description">BANK DIGITAL</p>
+                    </div>
+                </div>
+                <div class="account-info" data-number="OFFLINE" title="Tidak Tersedia">
+                    <div class="account-number"><span class="status-off">OFFLINE</span></div>
+                    <div class="account-name">BELUM TERSEDIA</div>
+                </div>
+                <div class="button-group">
+                    <button class="payment-button" disabled style="opacity:0.6; cursor:not-allowed;">BAYAR DENGAN SEABANK</button>
+                    <a href="https://t.me/NAXLRUNTOOLS" class="payment-button telegram-button" target="_blank">KONFIR KE TELEGRAM</a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="warning-card">
+            <div class="warning-title">PERHATIAN!</div>
+            <div class="warning-text">
+                PAYMENT SEMUA BANK & E-WALLET (kecuali yang tersedia) SEDANG LIMIT!<br>
+                SILAHKAN TRANSFER KE E-WALLET DI ATAS YANG TERSEDIA!
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 NIIX Agency — RADISSON EDITION</p>
+        <p>PREMIUM PAYMENT SOLUTION BY NIIX AGENCY</p>
+    </footer>
+
+    <script>
+        // Optimized Sound Manager
+        class SoundManager {
+            constructor() {
+                this.enabled = true;
+                this.context = null;
+                this.initAudioContext();
+            }
+
+            initAudioContext() {
+                try {
+                    this.context = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.warn('Web Audio API not supported');
+                    this.enabled = false;
+                }
+            }
+            
+            // Suara klik yang lebih profesional (mengganti laser)
+            createClickSound() {
+                if (!this.context || !this.enabled) return;
+                
+                const now = this.context.currentTime;
+                const oscillator = this.context.createOscillator();
+                const gainNode = this.context.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.context.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(440, now);
+                
+                gainNode.gain.setValueAtTime(0.2, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                
+                oscillator.start(now);
+                oscillator.stop(now + 0.15);
+            }
+
+            // Suara copy yang lebih sederhana
+            createBeepSound() {
+                if (!this.context || !this.enabled) return;
+                
+                const now = this.context.currentTime;
+                const oscillator = this.context.createOscillator();
+                const gainNode = this.context.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.context.destination);
+                
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(1200, now);
+                
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                
+                oscillator.start(now);
+                oscillator.stop(now + 0.1);
+            }
+
+            // Suara hover yang sangat subtle
+            createPulseSound() {
+                if (!this.context || !this.enabled) return;
+                
+                const now = this.context.currentTime;
+                const oscillator = this.context.createOscillator();
+                const gainNode = this.context.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.context.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(800, now);
+                
+                gainNode.gain.setValueAtTime(0.02, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                
+                oscillator.start(now);
+                oscillator.stop(now + 0.08);
+            }
+
+            playSound(type) {
+                if (!this.enabled) return;
+                
+                switch(type) {
+                    case 'click':
+                        this.createClickSound();
+                        break;
+                    case 'copy':
+                        this.createBeepSound();
+                        break;
+                    case 'hover':
+                        this.createPulseSound();
+                        break;
+                }
+            }
+
+            toggle() {
+                this.enabled = !this.enabled;
+                return this.enabled;
+            }
+        }
+
+        const soundManager = new SoundManager();
+
+        // Fungsi createOptimizedBackground dihilangkan karena tema ini minimalis
+
+        function setupAutoCopy() {
+            const accountInfos = document.querySelectorAll('.account-info');
+            const notification = document.getElementById('copyNotification');
+            
+            accountInfos.forEach(info => {
+                info.addEventListener('click', function() {
+                    const number = this.getAttribute('data-number');
+                    if (number === 'OFFLINE' || number === 'LIMIT') {
+                        soundManager.playSound('click');
+                        return; 
+                    }
+                    
+                    soundManager.playSound('copy');
+                    
+                    navigator.clipboard.writeText(number).then(() => {
+                        notification.style.display = 'block';
+                        setTimeout(() => {
+                            notification.style.display = 'none';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                        // Fallback
+                        const textarea = document.createElement('textarea');
+                        textarea.value = number;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        
+                        notification.style.display = 'block';
+                        setTimeout(() => {
+                            notification.style.display = 'none';
+                        }, 2000);
+                    });
+                });
+            });
+        }
+
+        function setupPaymentButtons() {
+            const buttons = document.querySelectorAll('.payment-button, .account-info');
+            
+            buttons.forEach(button => {
+                if (!button.disabled) {
+                    button.addEventListener('click', function() {
+                        soundManager.playSound('click');
+                    });
+                    
+                    // Hanya tambahkan event mouseenter pada elemen yang memiliki interaksi yang jelas
+                    if (button.tagName === 'BUTTON' || button.tagName === 'A') {
+                         button.addEventListener('mouseenter', function() {
+                            soundManager.playSound('hover');
+                        });
+                    }
+                }
+            });
+
+            document.getElementById('pay-with-dana').addEventListener('click', function() {
+                alert('SILAKAN LAKUKAN TRANSFER KE NOMOR DANA YANG TERTERA DAN KONFIRMASI MELALUI TELEGRAM');
+            });
+        }
+
+        function setupSoundToggle() {
+            const soundToggle = document.getElementById('soundToggle');
+            const icon = soundToggle.querySelector('i');
+            
+            soundToggle.addEventListener('click', function() {
+                const enabled = soundManager.toggle();
+                
+                if (enabled) {
+                    icon.className = 'fas fa-volume-up';
+                    soundToggle.classList.remove('muted');
+                    soundManager.playSound('click');
+                } else {
+                    icon.className = 'fas fa-volume-mute';
+                    soundToggle.classList.add('muted');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // createOptimizedBackground(); // Dihilangkan
+            setupAutoCopy();
+            setupPaymentButtons();
+            setupSoundToggle();
+            
+            const paymentCards = document.querySelectorAll('.payment-card');
+            paymentCards.forEach((card, index) => {
+                // Animasi fade-in dan slide-up
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+
+            setTimeout(() => {
+                soundManager.playSound('click');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
